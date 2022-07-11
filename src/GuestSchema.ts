@@ -13,11 +13,37 @@ const schema = {
       minimum: 0,
       maximum: 100,
     },
+    profession: {
+      type: 'string',
+      // uniforms: { component: SelectField },
+      options: [
+        {
+          label: 'Developer',
+          value: 'developer',
+        },
+        {
+          label: 'Tester',
+          value: 'tester',
+        },
+        {
+          label: 'Product owner',
+          value: 'product-owner',
+        },
+        {
+          label: 'Project manager',
+          value: 'project-manager',
+        },
+        {
+          label: 'Businessman',
+          value: 'businessman',
+        },
+      ],
+    },
   },
   required: ['firstName', 'lastName'],
 };
 
-const ajv = new Ajv({ allErrors: true, useDefaults: true });
+const ajv = new Ajv({ allErrors: true, useDefaults: true, strict: "log" });
 
 function createValidator(schema: object) {
   const validator = ajv.compile(schema);
