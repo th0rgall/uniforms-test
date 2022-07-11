@@ -21,7 +21,6 @@
     "uniforms": "^3.10.0-rc.1",
     "uniforms-bridge-json-schema": "^3.10.0-rc.1",
     "uniforms-mui": "^3.10.0-rc.1",
-    "uniforms-semantic": "^3.10.0-rc.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
