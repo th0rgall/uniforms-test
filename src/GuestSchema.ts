@@ -1,4 +1,5 @@
-import Ajv from 'ajv/dist/2019';
+import Ajv from "ajv";
+import addFormats from "ajv-formats";
 import { JSONSchemaBridge } from 'uniforms-bridge-json-schema';
 
 const options = [
@@ -30,6 +31,10 @@ const validatorSchema = {
   type: 'object',
   properties: {
     firstName: { type: 'string' },
+    birthday: {
+      "type": "string", //Attention!
+      "format": "date-time"
+    },
     lastName: { type: 'string' },
     workExperience: {
       description: 'Work experience in years',
@@ -37,11 +42,11 @@ const validatorSchema = {
       minimum: 0,
       maximum: 100,
     },
-    profession: 
-        // For testing: intentionally create an error: only the first two options are actually allowed
-        // by the validator in this case (Developer and Tester). The rest generate an error
-        // when submitting.
-        {type: "string", anyOf: options.slice(0, 2).map(o => ({const: o.value}))}
+    profession:
+      // For testing: intentionally create an error: only the first two options are actually allowed
+      // by the validator in this case (Developer and Tester). The rest generate an error
+      // when submitting.
+      { type: "string", anyOf: options.slice(0, 2).map(o => ({ const: o.value })) }
     ,
   },
   required: ['firstName', 'lastName'],
@@ -53,7 +58,7 @@ const uniformsSchema = {
   properties: {
     ...validatorSchema.properties,
     profession: {
-      // ...validatorSchema.properties.profession,
+      ...validatorSchema.properties.profession,
       // The Uniforms bridge will try to map the "anyOf" value to a React DOM attribute,
       // leading to a warning.
       // So here we leave it open as a generic "string".
@@ -64,7 +69,8 @@ const uniformsSchema = {
   }
 }
 
-const ajv = new Ajv({ allErrors: true, useDefaults: true, strict: true });
+const ajv = new Ajv({ allErrors: true, useDefaults: true, strict: true, keywords: ["uniforms", "options"] });
+addFormats(ajv)
 
 function createValidator(schema: object) {
   const validator = ajv.compile(schema);
@@ -75,6 +81,7 @@ function createValidator(schema: object) {
   };
 }
 
-const schemaValidator = createValidator(validatorSchema);
+// const schemaValidator = createValidator(validatorSchema);
+const schemaValidator = createValidator(uniformsSchema);
 
 export const bridge = new JSONSchemaBridge(uniformsSchema, schemaValidator);
